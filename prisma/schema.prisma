@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Lang {
+  RU
+  EN
+}
+
+enum Theme {
+  LIGHT
+  DARK
+}
+
+model User {
+  id         Int     @id @default(autoincrement())
+  username   String
+  password   String
+  songsLiked Song[]  @relation(name: "likes")
+  songs      Song[]
+  lang       Lang    @default(EN)
+  theme      Theme   @default(LIGHT)
+  isAdmin    Boolean @default(false)
+  albums     Album[]
+
+  @@map("users")
+}
+
+model Song {
+  id         Int    @id @default(autoincrement())
+  imageUrl   String
+  audioUrl   String
+  name       String
+  artist     String
+  likers     User[] @relation(name: "likes")
+  creator    User   @relation(fields: [creatorId], references: [id])
+  creatorId  Int
+  numLikes   Int    @default(0)
+  numListens Int    @default(0)
+  album      Album? @relation(fields: [albumId], references: [id])
+  albumId    Int?
+
+  @@map("songs")
+}
+
+model Album {
+  id        Int    @id @default(autoincrement())
+  name      String
+  numSongs  Int    @default(0)
+  creator   User   @relation(fields: [creatorId], references: [id])
+  imageUrl  String
+  creatorId Int
+  songs     Song[]
+
+  @@map("albums")
+}
