@@ -10,5 +10,6 @@ import { SongsService } from './songs.service';
   imports: [CloudinaryModule, PrismaModule, AlbumsModule],
   controllers: [SongsController],
   providers: [SongsService],
+  exports: [SongsService],
 })
 export class SongsModule {}

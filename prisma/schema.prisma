@@ -18,32 +18,36 @@ enum Theme {
 }
 
 model User {
-  id         Int     @id @default(autoincrement())
-  username   String
-  password   String
-  songsLiked Song[]  @relation(name: "likes")
-  songs      Song[]
-  lang       Lang    @default(EN)
-  theme      Theme   @default(LIGHT)
-  isAdmin    Boolean @default(false)
-  albums     Album[]
+  id            Int       @id @default(autoincrement())
+  username      String
+  password      String
+  songsLiked    Song[]    @relation(name: "likes")
+  songs         Song[]
+  lang          Lang      @default(EN)
+  theme         Theme     @default(LIGHT)
+  isAdmin       Boolean   @default(false)
+  albums        Album[]
+  comments      Comment[]
+  commentsLiked Comment[] @relation(name: "commentsLiked")
 
   @@map("users")
 }
 
 model Song {
-  id         Int    @id @default(autoincrement())
-  imageUrl   String
-  audioUrl   String
-  name       String
-  artist     String
-  likers     User[] @relation(name: "likes")
-  creator    User   @relation(fields: [creatorId], references: [id])
-  creatorId  Int
-  numLikes   Int    @default(0)
-  numListens Int    @default(0)
-  album      Album? @relation(fields: [albumId], references: [id])
-  albumId    Int?
+  id          Int       @id @default(autoincrement())
+  imageUrl    String
+  audioUrl    String
+  name        String
+  artist      String
+  likers      User[]    @relation(name: "likes")
+  creator     User      @relation(fields: [creatorId], references: [id])
+  creatorId   Int
+  numLikes    Int       @default(0)
+  numListens  Int       @default(0)
+  numComments Int       @default(0)
+  album       Album?    @relation(fields: [albumId], references: [id])
+  albumId     Int?
+  Comment     Comment[]
 
   @@map("songs")
 }
@@ -58,4 +62,21 @@ model Album {
   songs     Song[]
 
   @@map("albums")
+}
+
+model Comment {
+  id             Int       @id @default(autoincrement())
+  numLikes       Int       @default(0)
+  creator        User      @relation(fields: [creatorId], references: [id])
+  creatorId      Int
+  likers         User[]    @relation(name: "commentsLiked")
+  song           Song?     @relation(fields: [songId], references: [id])
+  songId         Int?
+  text           String
+  commentId      Int?
+  comment        Comment?  @relation("CommentSubComments", fields: [commentId], references: [id])
+  subComments    Comment[] @relation("CommentSubComments")
+  numSubComments Int       @default(0)
+
+  @@map("comments")
 }

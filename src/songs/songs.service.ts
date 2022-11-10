@@ -147,6 +147,32 @@ export class SongsService {
     });
   }
 
+  async incrementSongNumComments({ songId }: { songId: number }) {
+    await this.prismaService.song.update({
+      where: {
+        id: songId,
+      },
+      data: {
+        numComments: {
+          increment: 1,
+        },
+      },
+    });
+  }
+
+  async decrementSongNumComments({ songId }: { songId: number }) {
+    await this.prismaService.song.update({
+      where: {
+        id: songId,
+      },
+      data: {
+        numComments: {
+          increment: -1,
+        },
+      },
+    });
+  }
+
   async createSong(
     data: CreateSongDto & {
       creator: User;
